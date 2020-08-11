@@ -1,8 +1,8 @@
-export TRAIN_FILE=examples/language-modeling/data/mw_train_lm.raw
+export TRAIN_FILE=examples/language-modeling/data/mw_train_50_lm.raw
 export TEST_FILE=examples/language-modeling/data/mw_test_lm.raw
 
 python examples/language-modeling/run_language_modeling.py \
-    --output_dir=output \
+    --output_dir=lm_mw_50 \
     --model_type=gpt2 \
     --model_name_or_path=gpt2 \
     --per_device_train_batch_size=2 \
