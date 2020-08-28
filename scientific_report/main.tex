@@ -130,8 +130,8 @@ Recently, the self-attention-based Transformer model achieved state-of-the-art p
 GPT-2~\cite{radford2019language} is probably one of the most popular language model nowadays, it uses a variant of the Transformer  architecture~\cite{vaswani2017attention}. It is an auto-regressive language model that leverages 12-24 layers of masked, multi-head self-attention Transformers. GPT-2 is pre-trained on massive text data that consists of 8 million web pages a total of 40Gb of text data. It has superior performance in characterizing human language data distribution and knowledge transfer. Given text prompts, GPT-2 can generate realistic sentences.
 
 \todo{MG: Can you say what is the main difference between BERT and GPT-2?}
+GPT-2 consists of solely stacked decoder blocks from the transformer architecture and it works like a traditional language model is that it takes word vectors and input and produces estimates for the probability of the next word as outputs. It is auto-regressive in nature: each token in the sentence has the context of the previous words. Thus GPT-2 works one token at a time. BERT~\cite{devlin2018bert}, by contrast, is not auto-regressive. It uses the entire surrounding context all-at-once and it uses the encoder part instead of the decoder part of the transformer architecture. In Section~\ref{discriminator} we explain in detail how we use BERT in this work.
 
-\todo{MM: I explain the delexicalization in section \ref{new_slot_error} Shall I move it after this section. I wanted to explain the delexicalization in the context of the metric that we propose and explain why we need a semantic dictionary}
 \subsection{Semantically-conditioned language models as dialogue generators}\label{conditioned-generators}
 Within the context of task-oriented dialogue, we need a way to control the natural language generator models, to make sure that the intended information is passed to the user. In this report we examine three such generators.
 
@@ -169,7 +169,6 @@ $$\mathrm{ERR+extras}=\frac{p+q+e}{N}.$$
 
 Considering that SC-LSTM and HDSA models generate the utterances delexicalized so no post-process is necessary. However, SC-GPT generates natural language directly, so we need to delexicalise it to extract information about $p$, $q$, $e$ and $N$.  We implement a post-process stage where we use the corresponding dialogue act from the test set for each utterance that SC-GPT generates. Using the dialogue act we replace the values that appear in it and in the generated sentence for special tokens that are agnostic of the slot value. After this, we build a semantic dictionary with all the slot-value pairs available in MultiWoz~\cite{budzianowski-etal-2018-multiwoz} dataset and we use this to find the extra values generated in the sentence. An example of this post-process procedure is shown in the Table~\ref{tab:delexicalization} where it can be seen that using only the dialogue act is not enough to find the realizations of extra slots.
 
-\todo{MG: This was not a good example as location was already part of DA, I removed it from DA}
 \begin{table}[H]
 \centering
 \begin{tabularx}{\textwidth}{l|X}
@@ -265,7 +264,7 @@ SC-GPT* & 10531 & 231 & 103 & 0.978\\ \hline
 \end{table}
 \end{center}
 
-It can be seen in both, Table~\ref{tab:err} and Table~\ref{tab:f1}, SC-LSTM is the model that has a higher error rate and lowest F1 score while SC-GPT is the one with the lowest Error Rate and highest F1 as previously reported by~\cite{TODO}.\todo{CITE:}
+It can be seen in both, Table~\ref{tab:err} and Table~\ref{tab:f1}, SC-LSTM is the model that has a higher error rate and lowest F1 score while SC-GPT is the one with the lowest Error Rate and highest F1.
 
 \subsection{Discriminate utterances}\label{results-language-model}
 \subsubsection{LSTM}
@@ -286,18 +285,19 @@ Combined\dagger & 0.9789 & 0.9789 & 0.9789 \\ \hline
 \end{table}
 
 
-% This table shows the results of the combined discriminator testing the utterances from the language models. The results are confusing me.
-%\begin{table}[]
-%\begin{tabular}{|l|c|c|c|}
-%\hline
-%\textbf{Data} & \textbf{\begin{tabular}[c]{@{}c@{}}Human Utterances\\ F1\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Language Model\\ Utterances F1\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Weighted Average\\ F1\end{tabular}} \\ \hline
-%LSTM & 0.6763 & 0.1301 & 0.4032 \\ \hline
-%Transformer & 0.9737 & 0.9731 & 0.9734 \\ \hline
-%GPT-2 & 0.7301 & 0.4391 & 0.5846 \\ \hline
-%\end{tabular}
-%\caption{}
-%\label{tab:my-table}
-%\end{table}
+\todo{This table shows the results of the combined discriminator testing the utterances from the language models. The results are confusing me.}
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Discriminator}} & \multicolumn{1}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}Human Utterances\\ F1\end{tabular}}} & \multicolumn{1}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}Language Model\\ Utterances F1\end{tabular}}} & \multicolumn{1}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}Weighted Average\\ F1\end{tabular}}} \\ \hline
+LSTM & 0.6763 & 0.1301 & 0.4032 \\ \hline
+Transformer & 0.9737 & 0.9731 & 0.9734 \\ \hline
+GPT-2 & 0.7301 & 0.4391 & 0.5846 \\ \hline
+\end{tabular}
+\caption{}
+\label{tab:my-table}
+\end{table}
 
 
 Using the Combined discriminator we test how good is the quality of the sentences generated by the models, SC-LSTM, HDSA, and SC-GPT. Table~\ref{tab:sem-conditioned} shows the results.
@@ -316,10 +316,8 @@ SC-GPT & 0.0383 \\ \hline
 \label{tab:sem-conditioned}
 \end{table}
 
-The hardest to distinguish from human input is SC-GPT and the easiest is SC-LSTM. This is in line with human evaluations performed in ~\cite{TODO}~\todo{CITE}. As oposed to that we can see the values of BLEU (Table~\ref{tab:bleu}) are not at all related to human trials performed previously.
+The hardest to distinguish from human input is SC-GPT and the easiest is SC-LSTM. This is in line with human evaluations performed in ~\cite{peng2020fewshot}. As oposed to that we can see the values of BLEU (Table~\ref{tab:bleu}) are not at all related to human trials performed previously.
 
-%%%MG: I don't understand this!!!
-%%%When we test the Semantically conditioned utterances we expect that the F1 of the discriminator drecease because the generated sentences look similar to the Human utterances. As we can see in Table~\ref{tab:discriminator-results} incorporating the semantic conditioner cell in a LSTM the F1 decrease around 50 points while adding the semantic condition to GPT-2 decrease in 88 points. 
 
 
 \begin{table}[H]
@@ -337,91 +335,28 @@ SC-GPT & 24.99 \\ \hline
 
 
 % Human evaluation from SC-GPT paper
-%\begin{table}[]
-%\begin{tabular}{|l|c|c|}
-%\hline
-%\textbf{Model} & \textbf{Informativeness} & \textbf{Naturalness} \\ %\hline
-%SC-LSTM & 2.14 & 2.33 \\ \hline
-%HDSA & 2.34 & 2.42 \\ \hline
-%SC-GPT & 2.71 & 2.69 \\ \hline
-%HUMAN & 2.77 & 2.61 \\ \hline
-%\end{tabular}
-%\caption{}
-%\label{tab:my-table}
-%\end{table}
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Model} & \textbf{Informativeness} & \textbf{Naturalness} \\ \hline
+SC-LSTM & 2.14 & 2.33 \\ \hline
+HDSA & 2.34 & 2.42 \\ \hline
+SC-GPT & 2.71 & 2.69 \\ \hline
+HUMAN & 2.77 & 2.61 \\ \hline
+\end{tabular}
+\caption{Human evaluations performed in ~\cite{peng2020fewshot}}
+\label{tab:human-evaluation}
+\end{table}
 
 
 \section{Conclusion}
-\todo{MM: You should write a beautiful conclusion}
-Evaluating a Natural Language Generator for oriented-task dialogue system is not an easy task and more than one metric is needed. In this work we examined existing automatic metrics of NLG and we also proposed a new metric to evaluate the whole generator model. We show that different aspects of slot error rate are necessary to accurately assess if the underlying semantics are generated. In addition, the BERT discriminator-based metric that we propose is able to provide a rating of naturalness which is more in-line with previously performed human experiments than commonly considered BLEU metric.
+
+Evaluating a Natural Language Generator for oriented-task dialogue system is not an easy task and more than one metric is needed. In this work we examined existing automatic metrics of NLG and we also proposed a new metric to evaluate the whole generator model. We show that different aspects of slot error rate are necessary to accurately assess if the underlying semantics are generated. In addition, the BERT discriminator-based metric that we propose is able to provide a rating of naturalness which is more in-line with previously performed human experiments than commonly considered BLEU metric. In this way we presented two new approaches how to evaluate the NLG models, using the new slot error metric to check "what the sentence says?" and the BERT discriminator-based metric "how natural the sentence is?". In future work we plan  to incorporate this metrics as criterion to evaluate the models but also as part of the training because we can use them to minimize the error and maximize the naturalness of the realizations.
 
 \todo{Finish the conclusion}
 
 
-\newpage
-just to have the information here (will be deleted after finish)
-BERT LSTM
-\begin{figure}[H]
-    \centering
-       \includegraphics[scale=.6]{figures/BERT LSTM.png}
-   \caption{BERT LSTM.}
-   \label{fig:1}
-\end{figure}
-
-
-BERT TRANSFORMER
-\begin{figure}[H]
-    \centering
-       \includegraphics[scale=.6]{figures/TRANSFORMER.png}
-   \caption{BERT TRANSFOMER.}
-   \label{fig:2}
-\end{figure}
-
-
-BERT GPT-2
-\begin{figure}[H]
-    \centering
-       \includegraphics[scale=.6]{figures/BERT GPT.png}
-   \caption{BERT GPT-2.}
-   \label{fig:3}
-\end{figure}
-
-BERT LSTM + TRASNFORMER + GPT-2
-\begin{figure}[H]
-    \centering
-       \includegraphics[scale=.6]{figures/LSTM+GPT+TRANSFORMER.png}
-   \caption{BERT LSTM+GPT+TRANSFORMER.}
-   \label{fig:4}
-\end{figure}
-
-
-BERT LSTM test SC-LSTM
-\begin{figure}[H]
-    \centering
-       \includegraphics[scale=.6]{figures/SC-LSTM in LSTM BERT.png}
-   \caption{BERT LSTM test SC-LSTM.}
-   \label{fig:5}
-\end{figure}
-\newpage
-\bibliography{references.bib} 
-
-BERT TRANSFORMER test HDSA
-\begin{figure}[H]
-    \centering
-       \includegraphics[scale=.6]{figures/HDSA in TRANSFOMERS.png}
-   \caption{BERT TRANSFORMER test HDSA.}
-   \label{fig:5}
-\end{figure}
-\newpage
-\bibliography{references.bib} 
-
-BERT GPT-2 test SC-GPT
-\begin{figure}[H]
-    \centering
-       \includegraphics[scale=.6]{figures/SC-GPT in GPT BERT.png}
-   \caption{BERT SC-GPT in GPT BERT.}
-   \label{fig:5}
-\end{figure}
 \newpage
 \bibliography{references.bib} 
 
