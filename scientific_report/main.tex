@@ -129,7 +129,7 @@ Recently, the self-attention-based Transformer model achieved state-of-the-art p
 
 GPT-2~\cite{radford2019language} is probably one of the most popular language model nowadays, it uses a variant of the Transformer  architecture~\cite{vaswani2017attention}. It is an auto-regressive language model that leverages 12-24 layers of masked, multi-head self-attention Transformers. GPT-2 is pre-trained on massive text data that consists of 8 million web pages a total of 40Gb of text data. It has superior performance in characterizing human language data distribution and knowledge transfer. Given text prompts, GPT-2 can generate realistic sentences.
 
-\todo{MG: Can you say what is the main difference between BERT and GPT-2?}
+
 GPT-2 consists of solely stacked decoder blocks from the transformer architecture and it works like a traditional language model is that it takes word vectors and input and produces estimates for the probability of the next word as outputs. It is auto-regressive in nature: each token in the sentence has the context of the previous words. Thus GPT-2 works one token at a time. BERT~\cite{devlin2018bert}, by contrast, is not auto-regressive. It uses the entire surrounding context all-at-once and it uses the encoder part instead of the decoder part of the transformer architecture. In Section~\ref{discriminator} we explain in detail how we use BERT in this work.
 
 \subsection{Semantically-conditioned language models as dialogue generators}\label{conditioned-generators}
@@ -310,14 +310,15 @@ Using the Combined discriminator we test how good is the quality of the sentence
 \multicolumn{1}{|c|}{\textbf{Data}} & \textbf{\begin{tabular}[c]{@{}c@{}}Sem. Conditioned\\ Utterances F1\end{tabular}} \\ \hline
 SC-LSTM & 0.3140 \\ \hline
 HDSA & 0.1351 \\ \hline
-SC-GPT & 0.0383 \\ \hline
+SC-GPT & 0.0383 \\ \hline \hline
+MultiWoz & 0.0139 \\ \hline
 \end{tabular}
-\caption{F1 score of Combined discriminator model, tested in SC-LSTM, HDSA, and SC-GPT realisations (Lower the better)}
+\caption{F1 score of Combined discriminator model, tested in SC-LSTM, HDSA, and SC-GPT realisations (Lower the better). Also, we tested how the model performs predicting the sentences from test set of MultiWoz, the last row shows the results}
 \label{tab:sem-conditioned}
 \end{table}
+\todo{CHECK how to show this results}
 
 The hardest to distinguish from human input is SC-GPT and the easiest is SC-LSTM. This is in line with human evaluations performed in ~\cite{peng2020fewshot}. As oposed to that we can see the values of BLEU (Table~\ref{tab:bleu}) are not at all related to human trials performed previously.
-
 
 
 \begin{table}[H]
